@@ -1,25 +1,62 @@
-import { useState } from "react";
-import { AppProvider } from "./context/AppContext";
-import Navbar from "./components/Layout/Navbar";
-import Board from "./components/Board/Board";
-import SprintPanel from "./components/Sprint/SprintPanel";
-import AnalyticsDashboard from "./components/Analytics/AnalyticsDashboard";
-import RiskPanel from "./components/Risk/RiskPanel";
+import { useState, useEffect } from "react";
+import Navbar from "./components/Navbar";
+import Board from "./components/Board";
+import SprintPanel from "./components/SprintPanel";
+import Analytics from "./components/Analytics";
+import RiskPanel from "./components/RiskPanel";
+import { loadTasks, saveTasks } from "./utils/taskStorage";
+import { loadSprints, saveSprints } from "./utils/sprintStorage";
+import { sampleTasks, sampleSprints } from "./utils/sampleData";
+import "./App.css";
 
-export default function App() {
-  const [view, setView] = useState("board");
+function App() {
+  const [page, setPage] = useState("board");
+  const [tasks, setTasks] = useState(() => loadTasks());
+  const [sprints, setSprints] = useState(() => loadSprints());
+
+  useEffect(() => {
+    saveTasks(tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    saveSprints(sprints);
+  }, [sprints]);
+
+  function loadSampleData() {
+    setTasks(sampleTasks());
+    setSprints(sampleSprints());
+  }
+
+  function clearData() {
+    if (window.confirm("Delete all tasks and sprints?")) {
+      setTasks([]);
+      setSprints([]);
+    }
+  }
 
   return (
-    <AppProvider>
-      <div className="app-shell">
-        <Navbar view={view} setView={setView} />
-        <main className="app-main">
-          {view === "board" && <Board />}
-          {view === "sprint" && <SprintPanel />}
-          {view === "analytics" && <AnalyticsDashboard />}
-          {view === "risk" && <RiskPanel />}
-        </main>
+    <div>
+      <Navbar
+        page={page}
+        setPage={setPage}
+        onLoadSample={loadSampleData}
+        onClearData={clearData}
+      />
+      <div className="container">
+        {page === "board" && <Board tasks={tasks} setTasks={setTasks} />}
+        {page === "sprint" && (
+          <SprintPanel
+            tasks={tasks}
+            setTasks={setTasks}
+            sprints={sprints}
+            setSprints={setSprints}
+          />
+        )}
+        {page === "analytics" && <Analytics tasks={tasks} sprints={sprints} />}
+        {page === "risk" && <RiskPanel tasks={tasks} sprints={sprints} />}
       </div>
-    </AppProvider>
+    </div>
   );
 }
+
+export default App;
