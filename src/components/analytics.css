@@ -1,0 +1,17 @@
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.velocity-text {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #444444;
+}
+
+@media (max-width: 900px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
