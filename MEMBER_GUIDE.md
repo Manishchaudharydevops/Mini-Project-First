@@ -1,33 +1,35 @@
-# Member 2 Guide - Mayank Chaudhary (2415000953)
+# Member 4 Guide - Manas Kumar Singh (2415000923)
 
 Project: Agile Project & Sprint Analytics Suite
-Role: Drag and Drop and Sprint Management
-Branch name: feature/drag-drop-sprint
+Role: Risk Prediction and Risk Analysis
+Branch name: feature/risk-score
 
 ## Your files (inside the `src` folder of this zip)
-- src/utils/dragDrop.js
-- src/utils/sprintStorage.js
-- src/components/SprintPanel.jsx
-- src/components/SprintForm.jsx
-- src/components/sprint.css
+- src/utils/riskScore.js
+- src/components/RiskPanel.jsx
+- src/components/risk.css
 
 ## What you have to complete
 
-- Drag and drop functions (dragDrop.js): startDrag, allowDrop, getDroppedTaskId, moveTask
-- moveTask changes the task status and sets the completed date when a task is moved to Done
-- Save and load sprints using Local Storage (sprintStorage.js)
-- Sprint page: create a sprint with name, start date and end date (SprintForm.jsx, SprintPanel.jsx)
-- Show current sprint info and deadline text (days left, today, passed)
-- Add tasks to the sprint and remove tasks from the sprint
-- Show Total Tasks, Completed Tasks, Remaining Tasks, Total Story Points, Completed Story Points
-- Complete Sprint button: saves the velocity and sends unfinished tasks back to the available list
-- List of completed sprints with their velocity
+- calculateRisk(tasks, sprint) in riskScore.js returns { score, level, reasons }
+- Rules (easy to explain in the viva):
+    Each overdue task: 10 points (max 30)
+    Each incomplete high-priority task: 8 points (max 20)
+    More than 3 tasks in progress: 10 points
+    Half of sprint time over but completion below 40%: 15 points
+    More than 15 story points remaining: 10 points
+    Deadline within 2 days with work remaining: 20 points
+    Deadline passed with work remaining: 25 points
+    Total is capped at 100
+- Level: below 30 = Low, 30 to 59 = Medium, 60 and above = High
+- Risk page with score circle, level, list of reasons and a rules table (RiskPanel.jsx)
+- Score updates automatically when tasks change
 
 ## How your part connects to the others
 
-- Props received by SprintPanel: `tasks`, `setTasks`, `sprints`, `setSprints`.
-- Member 1's Board and TaskCard use your dragDrop.js functions. Do not rename the 4 functions.
-- Member 3 and Member 4 read the sprint (status "active") and the task `sprintId` that you set.
+- Props received by RiskPanel: `tasks`, `sprints`.
+- Uses only tasks whose `sprintId` equals the active sprint id.
+- Uses helper functions from `src/utils/dateHelpers.js` (already in the repo).
 
 ## Data format used by everyone (do not change it)
 
@@ -39,12 +41,12 @@ App.jsx keeps `tasks` and `sprints` in state and passes them to each page as pro
 
 ## Test checklist before you push
 
-- Drag a card to every column and check the status changes
-- Refresh the page: the card must stay in the new column
-- Create a sprint, add 3 tasks, check the numbers
-- Move a task to Done and check Completed Tasks and Completed Story Points increase
-- Try an end date before the start date: alert must show
-- Complete the sprint and check it appears in Completed Sprints with velocity
+- No overdue tasks -> score is low and reasons say no major risk
+- Make 3 tasks overdue (set due date in the past) -> score and reasons increase
+- Add many story points to the sprint -> "story points remaining" reason shows
+- Low completion with sprint half over -> low completion reason shows
+- Sprint end date in 1 or 2 days -> deadline approaching reason shows
+- Click "Load Sample Data": expected result is 65 / 100, High
 
 ## Rules
 - Only change your own files. If you need a change in someone else's file, tell that member.
@@ -62,17 +64,15 @@ App.jsx keeps `tasks` and `sprints` in state and passes them to each page as pro
    git config user.name "Your Name"
    git config user.email "your-github-email@example.com"
 4. Create your branch:
-   git checkout -b feature/drag-drop-sprint
+   git checkout -b feature/risk-score
 5. Copy the `src` folder from this zip into the project folder. When Windows asks, choose "Replace the files". Your files will replace the placeholder files.
 6. Run `npm run dev` and test your part (checklist below). Click "Load Sample Data" in the navbar to get demo data.
 7. Commit in small steps (the mentor can see each one). Suggested commits:
-   a) Add drag and drop functions   -> git add src/utils/dragDrop.js
-   b) Add sprint storage helpers    -> git add src/utils/sprintStorage.js
-   c) Add sprint form               -> git add src/components/SprintForm.jsx
-   d) Add sprint panel              -> git add src/components/SprintPanel.jsx
-   e) Add sprint styling            -> git add src/components/sprint.css
+   a) Add risk score calculation    -> git add src/utils/riskScore.js
+   b) Add risk panel                -> git add src/components/RiskPanel.jsx
+   c) Add risk styling              -> git add src/components/risk.css
    (use git commit -m "message" after each git add)
 8. Push your branch:
-   git push -u origin feature/drag-drop-sprint
+   git push -u origin feature/risk-score
 9. Open GitHub, click "Compare & pull request", write a short description and create the Pull Request. The repo owner merges it using "Create a merge commit" so your commits stay under your name.
 10. After others are merged, update your local copy with: git checkout main, then git pull origin main
